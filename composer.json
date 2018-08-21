@@ -1,0 +1,41 @@
+{
+    "name": "raystech/medialibrary",
+    "description": ":description",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Piyapan Rodkuen",
+            "email": "piyapannr@gmail.com",
+            "homepage": "author homepage"
+        }
+    ],
+    "homepage": "https://github.com/raystech/medialibrary",
+    "keywords": ["Laravel", "medialibrary"],
+    "require": {
+        "illuminate/support": "~5"
+    },
+    "require-dev": {
+        "phpunit/phpunit": "~6.0",
+        "orchestra/testbench": "~3.0"
+    },
+    "autoload": {
+        "psr-4": {
+            "raystech\\medialibrary\\": "src/"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "raystech\\medialibrary\\Tests\\": "tests"
+        }
+    },
+    "extra": {
+        "laravel": {
+            "providers": [
+                "raystech\\medialibrary\\medialibraryServiceProvider"
+            ],
+            "aliases": {
+                "medialibrary": "raystech\\medialibrary\\Facades\\medialibrary"
+            }
+        }
+    }
+}
