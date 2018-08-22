@@ -2,6 +2,7 @@
 namespace Raystech\MediaManager\MediaAdder;
 
 use Illuminate\Database\Eloquent\Model;
+use Raystech\MediaManager\Exceptions\AddMediaException;
 use Raystech\MediaManager\File as PendingFile;
 use Raystech\MediaManager\Filesystem;
 use Raystech\MediaManager\MediaCollection\MediaCollection;
@@ -10,6 +11,7 @@ use Raystech\MediaManager\Utils\File;
 use Symfony\Component\HttpFoundation\File\File as SymfonyFile;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
 
+use Carbon\Carbon;
 /**
  *
  */
@@ -36,6 +38,9 @@ class MediaAdder
 
   /** @var array */
   protected $manipulations = [];
+
+  /** @var string */
+  protected $path;
 
   /** @var string */
   protected $pathToFile;
@@ -74,80 +79,94 @@ class MediaAdder
     return $this;
   }
 
+  private function generateMediaName($file)
+  {
+    $generated_name = sprintf("%s_%s", time(), md5(uniqid(rand(), true)));
+    $this->fileName   = sprintf("%s.%s", $generated_name, $file->getClientOriginalExtension());
+    $this->mediaName  = $generated_name;
+  }
+
   public function setFile($file): self
   {
     $this->file = $file;
-    // dd($file);
 
     if (is_string($file)) {
       $this->pathToFile = $file;
-      $this->setFileName(pathinfo($file, PATHINFO_BASENAME));
-      $this->mediaName = pathinfo($file, PATHINFO_FILENAME);
-
+      $this->fileName   = pathinfo($file, PATHINFO_BASENAME);
+      $this->mediaName  = pathinfo($file, PATHINFO_FILENAME);
       return $this;
     }
 
     if ($file instanceof UploadedFile) {
       $this->pathToFile = $file->getPath() . '/' . $file->getFilename();
-      $this->setFileName($file->getClientOriginalName());
-      $this->mediaName = pathinfo($file->getClientOriginalName(), PATHINFO_FILENAME);
+      $this->generateMediaName($file);
 
+      /*
+      $this->pathToFile = $file->getPath() . '/' . $file->getFilename();
+      $this->fileName   = $file->getClientOriginalName();
+      $this->mediaName  = pathinfo($file->getClientOriginalName(), PATHINFO_FILENAME);
+      */
       return $this;
     }
 
     if ($file instanceof SymfonyFile) {
       $this->pathToFile = $file->getPath() . '/' . $file->getFilename();
-      $this->setFileName(pathinfo($file->getFilename(), PATHINFO_BASENAME));
-      $this->mediaName = pathinfo($file->getFilename(), PATHINFO_FILENAME);
-
+      $this->fileName   = pathinfo($file->getFilename(), PATHINFO_BASENAME);
+      $this->mediaName  = pathinfo($file->getFilename(), PATHINFO_FILENAME);
       return $this;
     }
 
-    throw UnknownType::create();
+    throw AddMediaException::unknownType();
   }
 
   public function setFileName(string $fileName): self
   {
     $this->fileName = $fileName;
-
     return $this;
+  }
+
+  private function generateMediaPath(): string {
+  	$date  = Carbon::now();
+  	$month = $date->format('m');
+  	$year  = $date->format('Y');
+  	$path   = "{$year}/{$month}/";
+  	$this->path = $path;
+  	return $path;
   }
 
   public function toCollection(string $collectionName = 'default', string $diskName = ''): Media
   {
     if (!is_file($this->pathToFile)) {
-      // throw FileDoesNotExist::create($this->pathToFile);
-      throw new Exception("File {$this->pathToFile} does not exists", 1);
-
+      throw AddMediaException::fileDoesNotExist($this->pathToFile);
     }
 
     if (filesize($this->pathToFile) > config('mediamanager.max_file_size')) {
-      // throw FileIsTooBig::create($this->pathToFile);
-      throw new Exception("File is too big!", 1);
-
+      throw AddMediaException::fileIsTooBig($this->pathToFile);
     }
 
     $mediaClass = config('mediamanager.media_model');
     $media      = new $mediaClass();
 
+    $mime_type   = File::getMimetype($this->pathToFile);
+    $images_type = ['image/jpeg', 'image/png', 'image/gif'];
+
+    if (in_array($mime_type, $images_type)) {
+    	// TODO: resize and crop image before move
+    }
+
     $media->name = $this->mediaName;
-
     // $this->fileName = ($this->fileNameSanitizer)($this->fileName);
-    $this->fileName = $this->fileName;
-
     $media->file_name = $this->fileName;
-
     $media->disk = $this->determineDiskName($diskName, $collectionName);
 
     if (is_null(config("filesystems.disks.{$media->disk}"))) {
-      // throw DiskDoesNotExist::create($media->disk);
-      throw new Exception("Disk doesn't exists!", 1);
-
+      throw AddMediaException::diskDoesNotExist($media->disk);
     }
 
     $media->collection_name = $collectionName;
 
-    $media->mime_type = File::getMimetype($this->pathToFile);
+    $media->path = $this->generateMediaPath();
+    $media->mime_type = $mime_type;
     $media->size      = filesize($this->pathToFile);
     // $media->custom_properties = $this->customProperties;
     $media->custom_properties = '[]';
@@ -201,7 +220,6 @@ class MediaAdder
 
   protected function attachMedia(Media $media)
   {
-    // dd(class_basename($this->subject));
     if (!$this->subject->exists) {
       $this->subject->prepareToAttachMedia($media, $this);
 

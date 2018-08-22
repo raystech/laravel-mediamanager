@@ -185,9 +185,13 @@ class Filesystem
   public function getMediaDirectory(Media $media,  ? string $type = null) : string
   {
     $pathGenerator = PathGeneratorFactory::create();
-
+    
     if (!$type) {
-      $directory = $pathGenerator->getPath($media);
+    	if($media->path == null) {
+    		$directory = $pathGenerator->getPath($media);
+    	} else {
+    		$directory = $media->path;
+    	}
     }
 
     if ($type === 'conversions') {
