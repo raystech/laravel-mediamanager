@@ -1,9 +1,9 @@
 <?php
 
-// Available placeholders: raystech, medialibrary, raystech, medialibrary
+// Available placeholders: raystech, mediamanager, raystech, mediamanager
 return [
-    'src/MyPackage.php' => 'src/medialibrary.php',
-    'config/mypackage.php' => 'config/medialibrary.php',
-    'src/Facades/MyPackage.php' => 'src/Facades/medialibrary.php',
-    'src/MyPackageServiceProvider.php' => 'src/medialibraryServiceProvider.php',
+    'src/MyPackage.php' => 'src/mediamanager.php',
+    'config/mypackage.php' => 'config/mediamanager.php',
+    'src/Facades/MyPackage.php' => 'src/Facades/mediamanager.php',
+    'src/MyPackageServiceProvider.php' => 'src/mediamanagerServiceProvider.php',
 ];

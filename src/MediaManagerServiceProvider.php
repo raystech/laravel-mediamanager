@@ -1,10 +1,10 @@
 <?php
 
-namespace raystech\medialibrary;
+namespace Raystech\MediaManager;
 
 use Illuminate\Support\ServiceProvider;
 
-class medialibraryServiceProvider extends ServiceProvider
+class MediaManagerServiceProvider extends ServiceProvider
 {
     /**
      * Perform post-registration booting of services.
@@ -23,23 +23,23 @@ class medialibraryServiceProvider extends ServiceProvider
 
             // Publishing the configuration file.
             $this->publishes([
-                __DIR__.'/../config/medialibrary.php' => config_path('medialibrary.php'),
-            ], 'medialibrary.config');
+                __DIR__.'/../config/mediamanager.php' => config_path('mediamanager.php'),
+            ], 'mediamanager.config');
 
             // Publishing the views.
             /*$this->publishes([
                 __DIR__.'/../resources/views' => base_path('resources/views/vendor/raystech'),
-            ], 'medialibrary.views');*/
+            ], 'mediamanager.views');*/
 
             // Publishing assets.
             /*$this->publishes([
                 __DIR__.'/../resources/assets' => public_path('vendor/raystech'),
-            ], 'medialibrary.views');*/
+            ], 'mediamanager.views');*/
 
             // Publishing the translation files.
             /*$this->publishes([
                 __DIR__.'/../resources/lang' => resource_path('lang/vendor/raystech'),
-            ], 'medialibrary.views');*/
+            ], 'mediamanager.views');*/
 
             // Registering package commands.
             // $this->commands([]);
@@ -53,11 +53,11 @@ class medialibraryServiceProvider extends ServiceProvider
      */
     public function register()
     {
-        $this->mergeConfigFrom(__DIR__.'/../config/medialibrary.php', 'medialibrary');
+        $this->mergeConfigFrom(__DIR__.'/../config/mediamanager.php', 'MediaManager');
 
         // Register the service the package provides.
-        $this->app->singleton('medialibrary', function ($app) {
-            return new medialibrary;
+        $this->app->singleton('MediaManager', function ($app) {
+            return new MediaManager;
         });
     }
 
@@ -68,6 +68,6 @@ class medialibraryServiceProvider extends ServiceProvider
      */
     public function provides()
     {
-        return ['medialibrary'];
+        return ['MediaManager'];
     }
 }

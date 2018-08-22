@@ -1,4 +1,4 @@
-# medialibrary
+# mediamanager
 
 [![Latest Version on Packagist][ico-version]][link-packagist]
 [![Total Downloads][ico-downloads]][link-downloads]
@@ -12,7 +12,7 @@ This is where your description should go. Take a look at [contributing.md](contr
 Via Composer
 
 ``` bash
-$ composer require raystech/medialibrary
+$ composer require raystech/mediamanager
 ```
 
 ## Usage
@@ -44,14 +44,14 @@ If you discover any security related issues, please email piyapannr@gmail.com in
 
 MIT. Please see the [license file](license.md) for more information.
 
-[ico-version]: https://img.shields.io/packagist/v/raystech/medialibrary.svg?style=flat-square
-[ico-downloads]: https://img.shields.io/packagist/dt/raystech/medialibrary.svg?style=flat-square
-[ico-travis]: https://img.shields.io/travis/raystech/medialibrary/master.svg?style=flat-square
+[ico-version]: https://img.shields.io/packagist/v/raystech/mediamanager.svg?style=flat-square
+[ico-downloads]: https://img.shields.io/packagist/dt/raystech/mediamanager.svg?style=flat-square
+[ico-travis]: https://img.shields.io/travis/raystech/mediamanager/master.svg?style=flat-square
 [ico-styleci]: https://styleci.io/repos/12345678/shield
 
-[link-packagist]: https://packagist.org/packages/raystech/medialibrary
-[link-downloads]: https://packagist.org/packages/raystech/medialibrary
-[link-travis]: https://travis-ci.org/raystech/medialibrary
+[link-packagist]: https://packagist.org/packages/raystech/mediamanager
+[link-downloads]: https://packagist.org/packages/raystech/mediamanager
+[link-travis]: https://travis-ci.org/raystech/mediamanager
 [link-styleci]: https://styleci.io/repos/12345678
 [link-author]: https://github.com/raystech
 [link-contributors]: ../../contributors]

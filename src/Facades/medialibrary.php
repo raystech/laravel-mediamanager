@@ -1,10 +1,10 @@
 <?php
 
-namespace raystech\medialibrary\Facades;
+namespace Raystech\MediaManager\Facades;
 
 use Illuminate\Support\Facades\Facade;
 
-class medialibrary extends Facade
+class MediaManager extends Facade
 {
     /**
      * Get the registered name of the component.
@@ -13,6 +13,6 @@ class medialibrary extends Facade
      */
     protected static function getFacadeAccessor()
     {
-        return 'medialibrary';
+        return 'MediaManager';
     }
 }

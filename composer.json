@@ -1,6 +1,6 @@
 {
-    "name": "raystech/medialibrary",
-    "description": ":description",
+    "name": "raystech/mediamanager",
+    "description": "Media Manager for Laravel",
     "license": "MIT",
     "authors": [
         {
@@ -9,8 +9,8 @@
             "homepage": "http://www.raystech.github.io"
         }
     ],
-    "homepage": "https://github.com/raystech/medialibrary",
-    "keywords": ["Laravel", "medialibrary"],
+    "homepage": "https://github.com/raystech/laravel-mediamanager",
+    "keywords": ["Laravel", "MediaManager", "MediaLibrary"],
     "require": {
         "illuminate/support": "~5"
     },
@@ -20,21 +20,21 @@
     },
     "autoload": {
         "psr-4": {
-            "raystech\\medialibrary\\": "src/"
+            "Raystech\\MediaManager\\": "src/"
         }
     },
     "autoload-dev": {
         "psr-4": {
-            "raystech\\medialibrary\\Tests\\": "tests"
+            "Raystech\\MediaManager\\Tests\\": "tests"
         }
     },
     "extra": {
         "laravel": {
             "providers": [
-                "raystech\\medialibrary\\medialibraryServiceProvider"
+                "Raystech\\MediaManager\\MediaManagerServiceProvider"
             ],
             "aliases": {
-                "medialibrary": "raystech\\medialibrary\\Facades\\medialibrary"
+                "MediaManager": "Raystech\\MediaManager\\Facades\\MediaManager"
             }
         }
     }
