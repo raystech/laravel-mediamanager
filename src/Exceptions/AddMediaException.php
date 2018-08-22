@@ -25,4 +25,9 @@ class AddMediaException extends Exception
   {
     return new static("Only strings, FileObjects and UploadedFileObjects can be imported");
   }
+
+  public static function diskDoesNotExist($diskName)
+    {
+        return new static("There is no filesystem disk named `{$diskName}`");
+    }
 }
