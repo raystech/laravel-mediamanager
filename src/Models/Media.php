@@ -7,6 +7,7 @@ use Illuminate\Contracts\Support\Responsable;
 // use Raystech\MediaManager\Utils\File;
 use Illuminate\Database\Eloquent\Model;
 use Raystech\MediaManager\Models\Traits\CustomMediaProperties;
+use Raystech\MediaManager\UrlGenerator\UrlGeneratorFactory;
 
 class Media extends Model implements Responsable, Htmlable
 {
@@ -111,5 +112,19 @@ class Media extends Model implements Responsable, Htmlable
   public function getDiskDriverName(): string
     {
         return strtolower(config("filesystems.disks.{$this->disk}.driver"));
+    }
+
+    public function getFullUrl(string $conversionName = ''): string
+    {
+        return url($this->getUrl($conversionName));
+    }
+
+    /*
+     * Get the url to a original media file.
+     */
+    public function getUrl(string $conversionName = ''): string
+    {
+        $urlGenerator = UrlGeneratorFactory::createForMedia($this, $conversionName);
+        return $urlGenerator->getUrl();
     }
 }

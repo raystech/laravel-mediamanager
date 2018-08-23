@@ -199,7 +199,6 @@ class MediaAdder
         return $collectionDiskName;
       }
     }
-
     return config('mediamanager.disk_name');
   }
 

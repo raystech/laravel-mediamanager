@@ -2,8 +2,10 @@
 
 namespace Raystech\MediaManager\Media;
 
+use Illuminate\Support\Collection;
 use Raystech\MediaManager\MediaAdder\MediaAdderFactory;
 use Raystech\MediaManager\MediaCollection\MediaCollection;
+use Raystech\MediaManager\MediaRepository;
 use Raystech\MediaManager\Models\Media;
 
 trait MediaTrait
@@ -18,7 +20,7 @@ trait MediaTrait
   protected $unAttachedMediaItems = [];
   public static function bootMediaTrait()
   {
-    return 'booting';
+    // return 'booting';
   }
   protected $path       = '';
   protected $collection = 'image';
@@ -86,35 +88,89 @@ trait MediaTrait
   }
 
   public function registerMediaConversions(Media $media = null)
-    {
-    }
+  {
+  }
 
   public function registerAllMediaConversions(Media $media = null)
-    {
-        $this->registerMediaCollections();
+  {
+    $this->registerMediaCollections();
 
-        collect($this->mediaCollections)->each(function (MediaCollection $mediaCollection) use ($media) {
-            $actualMediaConversions = $this->mediaConversions;
+    collect($this->mediaCollections)->each(function (MediaCollection $mediaCollection) use ($media) {
+      $actualMediaConversions = $this->mediaConversions;
 
-            $this->mediaConversions = [];
+      $this->mediaConversions = [];
 
-            ($mediaCollection->mediaConversionRegistrations)($media);
+      ($mediaCollection->mediaConversionRegistrations)($media);
 
-            $preparedMediaConversions = collect($this->mediaConversions)
-                ->each(function (Conversion $conversion) use ($mediaCollection) {
-                    $conversion->performOnCollections($mediaCollection->name);
-                })
-                ->values()
-                ->toArray();
+      $preparedMediaConversions = collect($this->mediaConversions)
+        ->each(function (Conversion $conversion) use ($mediaCollection) {
+          $conversion->performOnCollections($mediaCollection->name);
+        })
+        ->values()
+        ->toArray();
 
-            $this->mediaConversions = array_merge($actualMediaConversions, $preparedMediaConversions);
-        });
+      $this->mediaConversions = array_merge($actualMediaConversions, $preparedMediaConversions);
+    });
 
-        $this->registerMediaConversions($media);
-    }
+    $this->registerMediaConversions($media);
+  }
 
   public function registerMediaCollections()
   {
   }
+
+  public function getMedia(string $collectionName = 'default', $filters = []): Collection
+  {
+    return app(MediaRepository::class)->getCollection($this, $collectionName, $filters);
+  }
+
+  public function loadMedia(string $collectionName)
+  {
+    $collection = $this->exists
+    ? $this->media
+    : collect($this->unAttachedMediaLibraryItems)->pluck('media');
+
+    return $collection
+      ->filter(function (Media $mediaItem) use ($collectionName) {
+        if ($collectionName == '') {
+          return true;
+        }
+
+        return $mediaItem->collection_name === $collectionName;
+      })
+      ->sortBy('order_column')
+      ->values();
+  }
+
+  public function clearMediaCollectionExcept(string $collectionName = 'default', $excludedMedia = [])
+    {
+        if ($excludedMedia instanceof Media) {
+            $excludedMedia = collect()->push($excludedMedia);
+        }
+
+        $excludedMedia = collect($excludedMedia);
+
+        if ($excludedMedia->isEmpty()) {
+            return $this->clearMediaCollection($collectionName);
+        }
+
+        $this->getMedia($collectionName)
+            ->reject(function (Media $media) use ($excludedMedia) {
+                return $excludedMedia->where('id', $media->id)->count();
+            })
+            ->each->delete();
+
+        if ($this->mediaIsPreloaded()) {
+            unset($this->media);
+        }
+
+        return $this;
+    }
+
+    protected function mediaIsPreloaded(): bool
+    {
+        return $this->relationLoaded('media');
+    }
+    
 
 }

@@ -13,6 +13,6 @@ class InvalidPathGenerator extends Exception
 
     public static function isntAPathGenerator(string $class)
     {
-        return new static("Class {$class} must implement `Spatie\\MediaLibrary\\PathGenerator\\PathGenerator`");
+        return new static("Class {$class} must implement `Raystech\\MediaManager\\PathGenerator\\PathGenerator`");
     }
 }
